@@ -19,7 +19,7 @@ public class SlowService {
 
     public CompletableFuture<String> callSlowService(String payload) {
 
-        ExecutorService yourOwnExecutor = Executors.newFixedThreadPool(10);
+        ExecutorService yourOwnExecutor = Executors.newFixedThreadPool(2);
 
         return CompletableFuture.supplyAsync(() -> {
             try {

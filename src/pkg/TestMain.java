@@ -36,7 +36,7 @@ public class TestMain {
         int availableProcessors = Runtime.getRuntime().availableProcessors();
         System.out.println("availableProcessors = " + availableProcessors);
         //ExecutorService yourOwnExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        ExecutorService yourOwnExecutor = Executors.newFixedThreadPool(1);
+        ExecutorService yourOwnExecutor = Executors.newFixedThreadPool(2);
 
         for(String city : cities){
             System.out.println("Calling TestMain - slowService CompletableFuture for city = " + city);
