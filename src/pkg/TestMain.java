@@ -15,14 +15,28 @@ public class TestMain {
 
         long startTime = System.currentTimeMillis();
 
-        List<String> cities = Arrays.asList("Bangalore", "LA", "Chicago", "London", "1", "2", "3", "4", "5", "6", "7");
+        List<String> cities = Arrays.asList("1", "2", "3", "4", "5", "6", "7");
         SlowService slowService = new SlowService();
+
+        System.out.println("================= First Solution -- START ===========================");
+        firstSolution(slowService, cities);
+        System.out.println("================= First Solution -- END ===========================");
+
+        System.out.println("================= Second Solution -- START ===========================");
+        secondSolution(slowService, cities);
+        System.out.println("================= Second Solution -- End ===========================");
+    }
+
+    public static void firstSolution(SlowService slowService, List<String> cities) throws Exception {
+
+        long startTime = System.currentTimeMillis();
+
         List<CompletableFuture<String>> completableFutureList = new ArrayList<>();
 
         int availableProcessors = Runtime.getRuntime().availableProcessors();
         System.out.println("availableProcessors = " + availableProcessors);
-        //ExecutorService yourOwnExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()-2);
-        ExecutorService yourOwnExecutor = Executors.newFixedThreadPool(10);
+        //ExecutorService yourOwnExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        ExecutorService yourOwnExecutor = Executors.newFixedThreadPool(1);
 
         for(String city : cities){
             System.out.println("Calling TestMain - slowService CompletableFuture for city = " + city);
@@ -45,6 +59,24 @@ public class TestMain {
 
         long endTime = System.currentTimeMillis();
         System.out.println("Completed all the city processing: Duration of execution "  + (endTime - startTime)/1000 + " secs");
+
     }
+
+    public static void secondSolution(SlowService slowService, List<String> cities) throws Exception {
+
+        long startTime = System.currentTimeMillis();
+
+        CompletableFuture[] futures = cities
+            .stream()
+            .map(slowService::callSlowService)
+            .toArray(CompletableFuture[]::new);
+
+        CompletableFuture.allOf(futures).join();
+        System.out.println(Arrays.stream(futures).map(CompletableFuture::join).toList());
+
+        long endTime = System.currentTimeMillis();
+
+        System.out.println("Completed all the city processing - Duration: " + (endTime - startTime)/1000 + "secs");
+}
 
 }
